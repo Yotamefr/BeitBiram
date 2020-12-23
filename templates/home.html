@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Beit Biram Timetable</title>
+        <meta name="viewport" content="width=device-width">
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <style>
+            * {
+                box-sizing: border-box
+            }
+
+            body {
+                background-color: #b23eff;
+            }
+
+            form {
+                padding-left: 37.5%;
+                padding-top: 18%;
+                width: 22.8em;
+                height: 25em;
+            }
+
+            input {
+                background: rgb(148, 44, 189);
+                background-size: 20px 80px;
+                background-position: 0.5em 0.6em;
+                border: none;
+                color: rgba(80, 80, 80, 1);
+                padding: 0 0 0 4em;
+                margin: 0 0 1em 0;
+                width: 20em;
+                height: 2.8em;
+                outline: none;
+                -webkit-transition: background-color 0.4s;
+                transition: background-color 0.4s;
+                vertical-align: middle;
+            }
+
+            ::placeholder {
+                color: #000000;
+            }
+
+            .submit {
+                background: rgba(35, 35, 35, 0.6);
+                color: rgba(220, 220, 220, 1);
+                padding: 0 0 0 0;
+                margin: 2.5em 0 0 7em;
+                width: 10em;
+                cursor: pointer;
+                -webkit-transition: background 0.4s;
+                transition: background 0.4s;
+            }
+
+            .submit:hover {
+                background: rgba(35, 35, 35, 0.8);
+            }
+
+            @media only screen and (max-width: 300px) {
+                .prev, .next,.text {font-size: 11px}
+            }
+        </style>
+        <form method="POST">
+            <input class="username" type="text" placeholder="Username" name="username">
+            <input class="password" type="password" placeholder="Password" name="password">
+            <input class="submit" type="submit" value="Login">
+        </form>
+    </body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Beit Biram Timetable</title>
+        <meta name="viewport" content="width=device-width">
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <style>
+            * {
+                box-sizing: border-box
+            }
+
+            body {
+                background-color: #b23eff;
+            }
+
+            table {
+                margin: 3em auto 0 auto;
+                text-align: center;
+            }
+
+            #lesson {
+                padding: 5em;
+            }
+
+            #previous {
+                margin-left: 94.7%;
+                background: rgb(148, 44, 189);
+                background-size: 20px 80px;
+                background-position: 0.5em 0.6em;
+                border: none;
+                color: rgba(80, 80, 80, 1);
+                outline: none;
+                -webkit-transition: background-color 0.4s;
+                transition: background-color 0.4s;
+                vertical-align: middle;
+            }
+
+            #next {
+                background: rgb(148, 44, 189);
+                background-size: 20px 80px;
+                background-position: 0.5em 0.6em;
+                border: none;
+                color: rgba(80, 80, 80, 1);
+                outline: none;
+                -webkit-transition: background-color 0.4s;
+                transition: background-color 0.4s;
+                vertical-align: middle;
+            }
+
+            @media only screen and (max-width: 300px) {
+                .prev, .next,.text {font-size: 11px}
+            }
+        </style>
+        <table id="timetable">
+            <tr>
+                <th></th>
+                <th></th>
+            </tr>
+            {% for item in lessons %}
+            <tr>
+                <td id="lesson">
+                    {% if item["lesson"] != "" %}
+                        {{ item["lesson"] }} - {{ item["teacher"] }}
+                        <br>
+                        {{ item["classroom"] }}
+                    {% endif %}
+                    {% if item["lesson"] == "" %}
+                        חלון
+                    {% endif %}
+                </td>
+                <td id="sidebar">
+                    {{ item["number"] }}
+                    <br>
+                    {{ item["time"] }}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <button id="next">Next</button>
+        <button id="previous">Previous</button>
+        <script>
+            const weeklyTimeTable = {{ week|safe }}; //  I know this looks like an error and your IDE/Code Editor will tell you it's an error, but in fact it's not. This is something for Flask.
+            const next = document.getElementById("next");
+            const prev = document.getElementById("previous");
+            var day = new Date().getDay();
+
+            next.onclick = () => {
+                var table = document.getElementById("timetable");
+                table.remove();
+                next.remove();
+                prev.remove();
+                table = document.createElement("TABLE");
+                table.id = "timetable";
+                day++;
+                while (day >= 6) {
+                    day -= 6;
+                };
+                const d = []
+                for (var i = 0; i < day; i++) {
+                    weeklyTimeTable.push(removeItemOnce(weeklyTimeTable, weeklyTimeTable[weeklyTimeTable.length-1]));
+                };
+                for (var i = 1; i <= 2; i++) {
+                    var header = table.createTHead();
+                    var row = header.insertRow(0);
+                    var cell = row.insertCell(0);
+                };
+                var count = 0;
+                var flag = false;
+                weeklyTimeTable[day].forEach( (key, value) => {
+                    var row = table.insertRow(count)
+                    var cell = row.insertCell(0);
+                    if (key["lesson"] === "") {
+                        cell.id = "lesson";
+                        cell.innerHTML = "חלון";
+                    } else if (key["lesson"] === undefined) {
+                        flag = true;
+                    } else {
+                        cell.id = "lesson";
+                        cell.innerHTML = `${key["lesson"]} - ${key["teacher"]}<br>${key["classroom"]}`;
+                    };
+                    if (!flag) {
+                        if (key["lesson"] != undefined) {
+                            cell = row.insertCell(1);
+                            cell.id = "sidebar";
+                            cell.innerHTML = `${key["number"]}<br>${key["time"]}`;
+                        };
+                    };
+                    count ++;
+                });
+                if (flag) {
+                    cell.innerHTML = "<b>!יום חופשי</b>"
+                };
+                document.body.appendChild(table);
+                document.body.appendChild(next);
+                document.body.appendChild(prev);
+            };
+
+            prev.onclick = () => {
+                var table = document.getElementById("timetable");
+                table.remove();
+                next.remove();
+                prev.remove();
+                table = document.createElement("TABLE");
+                table.id = "timetable";
+                day--;
+                while (day < 0) {
+                    day += 6;
+                };
+                const d = []
+                for (var i = 0; i < day; i++) {
+                    weeklyTimeTable.push(removeItemOnce(weeklyTimeTable, weeklyTimeTable[weeklyTimeTable.length-1]));
+                };
+                for (var i = 1; i <= 2; i++) {
+                    var header = table.createTHead();
+                    var row = header.insertRow(0);
+                    var cell = row.insertCell(0);
+                };
+                var count = 0;
+                var flag = false
+                weeklyTimeTable[day].forEach( (key, value) => {
+                    var row = table.insertRow(count)
+                    var cell = row.insertCell(0);
+                    if (key["lesson"] === "") {
+                        cell.id = "lesson";
+                        cell.innerHTML = "חלון";
+                    } else if (key["lesson"] === undefined) {
+                        flag = true;
+                    } else {
+                        cell.id = "lesson";
+                        cell.innerHTML = `${key["lesson"]} - ${key["teacher"]}<br>${key["classroom"]}`;
+                    };
+                    if (!flag) {
+                        if (key["lesson"] != undefined) {
+                            cell = row.insertCell(1);
+                            cell.id = "sidebar";
+                            cell.innerHTML = `${key["number"]}<br>${key["time"]}`;
+                        };
+                    };
+                    count ++;
+                });
+                if (flag) {
+                    cell.innerHTML = "<b>!יום חופשי</b>"
+                };
+                document.body.appendChild(table);
+                document.body.appendChild(next);
+                document.body.appendChild(prev);
+            };
+
+            function removeItemOnce(arr, value) {
+                const index = arr.indexOf(value);
+                if (index > -1) {
+                    var removed = arr.splice(index, 1);
+                };
+                return [arr, removed];
+            };
+        </script>
+    </body>
+</html>

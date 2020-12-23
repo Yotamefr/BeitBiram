@@ -1,0 +1,8 @@
+# Unrelated python stuff
+__pycache__
+# Intellij idea stuff
+.idea
+# Visual Studio Code stuff
+.vscode
+# My personal tests
+test.*
